@@ -7,6 +7,7 @@
 
 //     console.log(sum(2, 2))
 
+
 //     const sum2 = (num1, num2) => {
 //         console.log("1", num1, "2", num2)
 //         return num1 + num2

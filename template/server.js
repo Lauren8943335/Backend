@@ -7,6 +7,7 @@ const app = express();
 
 app.use(express.json()); // Middleware to parse JSON body
 
+
 // Define a port
 const PORT = 3000;
 

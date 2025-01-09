@@ -8,6 +8,7 @@ const first = function () {
   
 const last = function () {
   
+  
 };
 
 const each = function () {
