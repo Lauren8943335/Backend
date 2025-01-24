@@ -1,35 +1,124 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import axios from "axios";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [data, setData] = useState(); //initalize with an empty array
+  const [editingId, setEditingId] = useState(""); //state for the todo to be edited
+  const [editingtext, setEditingText] =useState(""); //state for edit input
 
+  // const [newToDo, setNewTodo] = setState("")
+
+  //Fetch TodOS from the backend
+  useEffect(() => {
+    axios({
+      method: "get",
+      url: "http://localhost:3000/gettodods",
+    })
+      .then((res) => {
+        console.log("res", res);
+        setData(res.data);
+      })
+      .catch((err) => console.log("err", err));
+  }, []);
+
+
+const handleOnDelete = (e) => {
+  console.log("e", e.target.id)
+
+}
+//Add new Todo
+const handleAddToDo = () => { 
+  if (!newTodo.trim()) return; // prevent empty todos
+const ToDoItem = {ToDo: newToDo, created: new Date() };
+
+axios
+.post ("http://localhost:3000/create", ToDoItem) //sends it to the back end
+.then((res) => { 
+setData([...data, res.data]); //update the todos list to the state
+setNewToDo("") //clear input field
+})
+.catch((err) => console.log("Error adding todo", err));
+}; 
+
+//delete a todo
+const handleDelete = (id) => { 
+console.log("Delete todo with ID:", id)//debug
+  axios 
+  .delete(`http://localhost:3000/delete/${id}`)
+  .then((res) => { 
+    console.log("Todo Deleted:", res.data);//filter out the deleted item from the state
+    setData(data.filter((item)=> item._id !== id)); //remove from UI
+  })
+  .catch((err) => console.log("Error deleting todo:", err)); 
+}; 
+
+//start editing a todo
+const HandleEdit = (id, currentToDo) => { 
+  setEditingId(id); //set the id of the todo being edited
+  setEditingText(currentToDo); //set the current text to the input field
+}; 
+
+//save edited todo
+const HandleSave = (id) => { 
+  axios
+  .put(`http://localhost:3000/update/${id}`), //send updated text to backend
+  setData(ToDo.editingText)
+  
+  .then((res)=>{ 
+    console.log("Todo Updated:", res); //refresh the list from the server after updating
+    axios 
+    .get(`http://localhost:3000/gettodos/${id}`)
+    setData(res.data)
+    .then((res) => { 
+      console.log("Updated List", res.data)
+      setData(res.data); //updated the state with the refreshed list
+    }) 
+    .catch((err) => console.log("Fetch Error after Update", err));
+setEditingId(null); //exit edit mode
+setEditingText(""); //clear edit text state 
+    })
+    .catch((err)=> console.log("Error updating todo:", err)); 
+  }; 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>To-Do-Matic</h1>
+      {console.log("newToDo", newToDo)}          
+            {/* input field and button for adding new todo */}
+            <div style={{marginBotton: "20px"}}>
+              <input type="text" placeholder="Enter new todo" value={newToDo} onChange={(e)=>setNewToDo(e.target.value)} style={{marginRight:"10px", padding:"5px"}}/> 
+              <button onClick={(e)=> handleAddToDo(e)} Style={{padding:"5px"}}>Add Todo</button>
+              </div>
+            {/* /display todos */}
+            {console.log("data", data)}
+            {data &&
+              data.map((item)=> (
+                <div 
+                key={item._id}
+                style={{border:"2px solid red", margin:"10px", padding: "10px"}}>
+              {editingId === item._id ? (
+                //edit mode
+                <div>
+                  <input type="text" volume={editingText} onChange={(e) => setEditingText=(e.target.value)} style = {{marginRight:"10px"}}
+                />
+                <button onClick={()=> HandleSave(item._id)} style={{padding:"5px"}}>Save</button>
+                <button onClick={()=> setEditingId(null)} style={{padding:"5px"}}>Cancel</button> 
+                </div>
+              ):(
+              //normal todo display
+              <div>
+              <p>{item.ToDo}</p> 
+              <button onClick={()=> handleDelete(item._id)} style={{padding:"5px"}}>Delete</button>
+              <button onClick={()=> HandleEdit(item._id, item.ToDo)} style={{padding:"10px"}}>Cancel</button>
+            </div>
+          )}
+          </div>
+        ))}
+     </div>   
+  );
 }
 
-export default App
+export default App;
