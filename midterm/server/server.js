@@ -5,7 +5,9 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(
+  {origin: "http://localhost:3000"}
+));
 
 const Schema = mongoose.Schema;
 
@@ -19,12 +21,12 @@ const ToDo = mongoose.model("ToDoSchema", ToDoSchema);
 const PORT = 3000;
 
 app.get("/test", (req, res) => {
-  console.log("get midterm hit");
+  console.log("get test hit");
   res.json({ msg: "success" });
 });
 
 app.get("/gettodos", (req, res) => {
-  console.log("get todos HIT");
+  console.log("get midterm HIT");
   ToDo.find().then((found) => {
     console.log("found", found);
     res.json(found);
