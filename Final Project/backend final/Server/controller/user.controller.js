@@ -28,7 +28,7 @@ module.exports = {
                 Auth.create(newUser)  //create user
                 .then(created => {
                     console.log("created", created)
-                .save(username)
+                .save()
                 })
     
     
