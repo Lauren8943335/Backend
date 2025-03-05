@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker</title>
+</head>
+<body>
+
+<h1>Budget Tracker</h1>
+    
+<p id="UpdatedBalance"> Balance:<span id="balance">$1000</span></p>
+
+<input type="number" id="expenseAmount" placeholder="Enter Expense Amount">
+
+<input type="text" id="expenseDescription" placeholder="Enter Expense Description">
+
+
+
+
+<button onclick="addExpense()">Add Expense</button>
+
+<h3>Expense History</h3>
+<ul id="expenseHistory"></ul>
+
+
+<script>
+    //starting balance
+    let balance = 10000;
+    //function to add expense
+    function addExpense(){
+        //get the expense amount
+        let expense = document.getElementById('expenseAmount').value;
+        let label = document.getElementById('expenseDescription').value;
+        //convert the expense amount to a number
+        expense = Number(expense);
+
+        //check if the expense is a number
+        if (expense > 0 && label.trim() !==""){
+        balance -= expense; //subtract the expense amount from the balance
+        document.getElementById('balance').textContent = "$" + balance;
+        let li = document.createElement('li');
+        li.textContent = label + " "+ "-$" + expense;
+        li.style.color = 'red';
+        document.getElementById('expenseHistory').appendChild(li);
+        } else { 
+            alert('Please enter a valid number');
+        }
+        //clear the input field
+        document.getElementById('expenseAmount').value = '';
+        document.getElementById('expenseDescription').value = '';
+        
+    }
+ 
+
+    </script>
+
+</body>
+</html>
